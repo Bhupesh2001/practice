@@ -122,7 +122,7 @@ curl -X POST http://localhost:8080/api/auth/register \
     "id": 1,
     "username": "johndoe",
     "email": "john@example.com",
-    "role": "ROLE_USER"
+    "role": "USER"
   }
 }
 ```
@@ -168,7 +168,7 @@ curl -X POST http://localhost:8080/api/auth/login \
     "id": 1,
     "username": "johndoe",
     "email": "john@example.com",
-    "role": "ROLE_USER"
+    "role": "USER"
   }
 }
 ```
@@ -210,7 +210,7 @@ curl -X POST http://localhost:8080/api/auth/refresh \
     "id": 1,
     "username": "johndoe",
     "email": "john@example.com",
-    "role": "ROLE_USER"
+    "role": "USER"
   }
 }
 ```
@@ -234,7 +234,7 @@ curl -X POST http://localhost:8080/api/auth/refresh \
 
 **Endpoint:** `GET /api/user/me`
 
-**Authorization:** Bearer Token (ROLE_USER or ROLE_ADMIN)
+**Authorization:** Bearer Token (USER or ADMIN)
 
 **Request:**
 ```bash
@@ -248,7 +248,7 @@ curl -X GET http://localhost:8080/api/user/me \
   "id": 1,
   "username": "johndoe",
   "email": "john@example.com",
-  "role": "ROLE_USER"
+  "role": "USER"
 }
 ```
 
@@ -280,7 +280,7 @@ curl -X GET http://localhost:8080/api/user/me \
 
 **Endpoint:** `GET /api/admin/test`
 
-**Authorization:** Bearer Token (ROLE_ADMIN only)
+**Authorization:** Bearer Token (ADMIN only)
 
 **Request:**
 ```bash
@@ -378,7 +378,7 @@ src/main/java/com/example/auth/
 │   └── ErrorResponse.java                 # Error response DTO
 ├── entity/
 │   ├── User.java                          # User entity (implements UserDetails)
-│   ├── Role.java                          # Role enum (ROLE_USER, ROLE_ADMIN)
+│   ├── Role.java                          # Role enum (USER, ADMIN)
 │   └── RefreshToken.java                  # Refresh token entity
 ├── repository/
 │   ├── UserRepository.java                # User data access
@@ -477,7 +477,7 @@ Connect to MySQL and promote user to admin:
 
 ```sql
 USE auth_db;
-UPDATE users SET role = 'ROLE_ADMIN' WHERE username = 'testuser';
+UPDATE users SET role = 'ADMIN' WHERE username = 'testuser';
 ```
 
 ---

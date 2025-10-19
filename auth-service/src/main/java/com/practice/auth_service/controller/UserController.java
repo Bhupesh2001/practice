@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for user-related endpoints.
- * Accessible by authenticated users with ROLE_USER or ROLE_ADMIN.
+ * Accessible by authenticated users with ROLE_USER or ADMIN.
  */
 @RestController
 @RequestMapping("/api/user")

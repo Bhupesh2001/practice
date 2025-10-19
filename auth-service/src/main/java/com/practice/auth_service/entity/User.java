@@ -52,11 +52,11 @@ public class User implements UserDetails {
     private String password;
 
     /**
-     * User role for authorization (ROLE_USER or ROLE_ADMIN)
+     * User role for authorization (ROLE_USER or ADMIN)
      */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private Role role = Role.USER;
+    private Role role = Role.ROLE_USER;
 
     /**
      * Account creation timestamp

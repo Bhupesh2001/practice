@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for admin-only endpoints.
- * Accessible only by users with ROLE_ADMIN.
+ * Accessible only by users with ADMIN.
  */
 @RestController
 @RequestMapping("/api/admin")

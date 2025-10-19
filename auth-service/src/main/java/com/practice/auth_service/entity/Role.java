@@ -8,10 +8,10 @@ public enum Role {
     /**
      * Regular user role with standard permissions
      */
-    USER,
+    ROLE_USER,
     
     /**
      * Administrator role with elevated permissions
      */
-    ADMIN
+    ROLE_ADMIN
 }
