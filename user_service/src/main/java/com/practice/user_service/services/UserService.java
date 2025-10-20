@@ -48,8 +48,6 @@ public class UserService {
         userProfile.setState(userInfoDto.getState());
         userProfile.setCountry(userInfoDto.getCountry());
         userProfile.setPostalCode(userInfoDto.getPostalCode());
-        userProfile.setRole(userInfoDto.getRole());
-        userProfile.setEnabled(userInfoDto.getEnabled());
         
         if (userProfile.getCreatedAt() == null) {
             userProfile.setCreatedAt(LocalDateTime.now());
@@ -119,8 +117,6 @@ public class UserService {
                 .state(userProfile.getState())
                 .country(userProfile.getCountry())
                 .postalCode(userProfile.getPostalCode())
-                .role(userProfile.getRole())
-                .enabled(userProfile.getEnabled())
                 .createdAt(userProfile.getCreatedAt())
                 .updatedAt(userProfile.getUpdatedAt())
                 .build();

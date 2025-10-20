@@ -57,12 +57,6 @@ public class UserInfoDto implements Serializable {
     @JsonProperty("postalCode")
     private String postalCode;
     
-    @JsonProperty("role")
-    private String role;
-    
-    @JsonProperty("enabled")
-    private Boolean enabled;
-    
     @JsonProperty("eventType")
     private String eventType; // CREATED, UPDATED, DELETED
     

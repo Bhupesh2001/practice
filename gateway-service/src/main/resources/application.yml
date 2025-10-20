@@ -1,0 +1,31 @@
+server:
+  port: 8080
+
+auth:
+  service:
+    base-url: http://localhost:8081
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        # Example 1: Route to user service
+        - id: user-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - name: AuthenticationFilter
+
+        # Example 1: Route to auth service
+        - id: auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/auth/**, /api/admin/**
+          filters:
+            - name: AuthenticationFilter
+
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin, RETAIN_FIRST

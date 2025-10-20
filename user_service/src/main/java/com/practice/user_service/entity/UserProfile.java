@@ -56,12 +56,6 @@ public class UserProfile {
     @Column(name = "postal_code", length = 10)
     private String postalCode;
     
-    @Column(name = "role", length = 20)
-    private String role;
-    
-    @Column(name = "enabled")
-    private Boolean enabled;
-    
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
