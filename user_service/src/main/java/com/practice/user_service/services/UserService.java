@@ -4,6 +4,7 @@ package com.practice.user_service.services;
 import com.practice.user_service.dto.UserInfoDto;
 import com.practice.user_service.dto.UserResponseDto;
 import com.practice.user_service.entity.UserProfile;
+import com.practice.user_service.mappers.UserMapper;
 import com.practice.user_service.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,8 @@ import java.util.stream.Collectors;
 public class UserService {
     
     private final UserProfileRepository userProfileRepository;
-    
+    private final UserMapper userMapper;
+
     /**
      * Create or update user from Kafka event
      */
@@ -36,18 +38,7 @@ public class UserService {
                 .orElse(new UserProfile());
         
         // Map DTO to Entity
-        userProfile.setUserId(userInfoDto.getUserId());
-        userProfile.setUsername(userInfoDto.getUsername());
-        userProfile.setEmail(userInfoDto.getEmail());
-        userProfile.setFirstName(userInfoDto.getFirstName());
-        userProfile.setLastName(userInfoDto.getLastName());
-        userProfile.setPhoneNumber(userInfoDto.getPhoneNumber());
-        userProfile.setDateOfBirth(userInfoDto.getDateOfBirth());
-        userProfile.setAddress(userInfoDto.getAddress());
-        userProfile.setCity(userInfoDto.getCity());
-        userProfile.setState(userInfoDto.getState());
-        userProfile.setCountry(userInfoDto.getCountry());
-        userProfile.setPostalCode(userInfoDto.getPostalCode());
+        userMapper.updateUserProfileFromDto(userInfoDto, userProfile);
         
         if (userProfile.getCreatedAt() == null) {
             userProfile.setCreatedAt(LocalDateTime.now());
