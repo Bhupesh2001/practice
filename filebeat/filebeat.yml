@@ -3,7 +3,24 @@ filebeat.inputs:
   - type: container
     paths:
       - '/var/lib/docker/containers/*/*.log'
+    fields:
+      environment: dev
+      source: docker
+    fields_under_root: true
     processors:
+      - drop_event:
+          when:
+            or:
+              - equals:
+                  container.name: "logstash"
+              - equals:
+                  container.name: "elasticsearch"
+              - equals:
+                  container.name: "kibana"
+              - equals:
+                  container.name: "mysql-elk-8.3.0"
+              - equals:
+                  container.name: "kafka"
       - add_docker_metadata:
           host: "unix:///var/run/docker.sock"
       - decode_json_fields:
