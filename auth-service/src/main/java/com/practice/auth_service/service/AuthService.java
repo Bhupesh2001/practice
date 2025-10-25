@@ -29,13 +29,16 @@ public class AuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
+        log.info("Attempting registration for user: {}", request.getUsername());
         // Check if username exists
         if (userRepository.existsByUsername(request.getUsername())) {
+            log.info("Registration failed: Username {} already exists", request.getUsername());
             throw new RuntimeException("Username already exists");
         }
 
         // Check if email exists
         if (userRepository.existsByEmail(request.getEmail())) {
+            log.info("Registration failed: Email {} already exists", request.getEmail());
             throw new RuntimeException("Email already exists");
         }
 
@@ -52,11 +55,14 @@ public class AuthService {
 
         // ========== Send FULL profile data to User Service via Kafka ==========
         // This is where profile data (firstName, lastName, address, etc.) goes
+        log.info("Publishing user created event for user: {}", savedUser.getUsername());
         publishUserCreatedEvent(savedUser, request);
 
         // Generate tokens
         String accessToken = jwtService.generateAccessToken(savedUser);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(savedUser.getUsername());
+
+        log.info("User {} registered successfully", savedUser.getUsername());
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
@@ -69,6 +75,7 @@ public class AuthService {
 
     @Transactional
     public AuthResponse login(LoginRequest request) {
+        log.info("Attempting login for user: {}", request.getUsername());
         // Authenticate user
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -84,6 +91,8 @@ public class AuthService {
         // Generate tokens
         String accessToken = jwtService.generateAccessToken(user);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getUsername());
+
+        log.info("User {} logged in successfully", user.getUsername());
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
