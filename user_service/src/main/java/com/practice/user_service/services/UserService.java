@@ -31,7 +31,7 @@ public class UserService {
      */
     @Transactional
     public void createOrUpdateUser(UserInfoDto userInfoDto) {
-        log.info("Processing user event: userId={}, eventType={}", 
+        log.info("Processing user event: userName={}, eventType={}",
                 userInfoDto.getUserId(), userInfoDto.getEventType());
         
         UserProfile userProfile = userProfileRepository.findById(userInfoDto.getUserId())
@@ -45,7 +45,7 @@ public class UserService {
         }
         
         UserProfile savedUser = userProfileRepository.save(userProfile);
-        log.info("Successfully saved user profile: userId={}, username={}", 
+        log.info("Successfully saved user profile: userName={}, username={}",
                 savedUser.getUserId(), savedUser.getUsername());
     }
     
@@ -54,13 +54,13 @@ public class UserService {
      */
     @Transactional
     public void deleteUser(Long userId) {
-        log.info("Deleting user profile: userId={}", userId);
+        log.info("Deleting user profile: userName={}", userId);
         
         if (userProfileRepository.existsById(userId)) {
             userProfileRepository.deleteById(userId);
-            log.info("Successfully deleted user profile: userId={}", userId);
+            log.info("Successfully deleted user profile: userName={}", userId);
         } else {
-            log.warn("User profile not found for deletion: userId={}", userId);
+            log.warn("User profile not found for deletion: userName={}", userId);
         }
     }
     

@@ -68,7 +68,7 @@ public class AuthServiceConsumer {
                     log.warn("Unknown event type: {}", userInfoDto.getEventType());
             }
             
-            log.info("Successfully processed {} event for userId: {}", 
+            log.info("Successfully processed {} event for userName: {}",
                     userInfoDto.getEventType(), userInfoDto.getUserId());
             
         } catch (Exception ex) {

@@ -11,7 +11,15 @@ spring:
   cloud:
     gateway:
       routes:
-        # Example 1: Route to user service
+        # Route to auth service
+        - id: auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/auth/**, /api/admin/**
+          filters:
+            - name: AuthenticationFilter
+
+        # Route to user service
         - id: user-service
           uri: http://localhost:8082
           predicates:
@@ -19,11 +27,19 @@ spring:
           filters:
             - name: AuthenticationFilter
 
-        # Example 1: Route to auth service
-        - id: auth-service
-          uri: http://localhost:8081
+        # Route to chatbot service
+        - id: chatbot-service
+          uri: http://localhost:8083
           predicates:
-            - Path=/api/auth/**, /api/admin/**
+            - Path=/api/ai/gemini/**
+          filters:
+            - name: AuthenticationFilter
+
+        # Route to expense service
+        - id: expense-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/expense/v1/**
           filters:
             - name: AuthenticationFilter
 

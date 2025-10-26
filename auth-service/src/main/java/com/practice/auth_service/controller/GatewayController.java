@@ -59,7 +59,7 @@ public class GatewayController {
                     .timestamp(System.currentTimeMillis())
                     .build();
 
-            log.info("✅ Returning success response for userId: {}", user.getId());
+            log.info("✅ Returning success response for userName: {}", user.getId());
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {

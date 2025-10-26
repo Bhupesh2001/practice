@@ -47,7 +47,7 @@ public class UserController {
     /**
      * Get user by ID
      */
-    @GetMapping("/{userId}")
+    @GetMapping("/{userName}")
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long userId,@RequestHeader HttpHeaders header) {
         log.info("Fetching user by ID: {}", userId);
         UserResponseDto user = userService.getUserById(userId);
