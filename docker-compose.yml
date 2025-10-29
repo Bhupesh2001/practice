@@ -1,4 +1,5 @@
 services:
+  # ---------- INFRA ----------
   kafka:
     image: apache/kafka:3.7.0
     ports:
@@ -9,8 +10,8 @@ services:
       KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT, PLAINTEXT:PLAINTEXT"
       KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://:9093"
-#      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"    # # use this when app running on docker want ot communicate to kafka
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092" # use this when app running on localhost want ot communicate to kafka
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"      # use this when services run inside docker network
+#      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092" # use this when services run locally
       KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
@@ -19,20 +20,96 @@ services:
     container_name: mysql-8.3.0
     restart: always
     environment:
-      MYSQL_USER: test
+      MYSQL_USER: root
       MYSQL_PASSWORD: 'Bhupesh@2001'
       MYSQL_ROOT_PASSWORD: 'Bhupesh@2001'
     ports:
       - '3306:3306'
-    expose:
-      - '3306'
     volumes:
       - mysql-db:/var/lib/mysql
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pBhupesh@2001" ]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pBhupesh@2001"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  # ---------- MICROSERVICES ----------
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_URL: jdbc:mysql://mysql:3306/auth_db2?createDatabaseIfNotExist=true
+      DB_USERNAME: root
+      DB_PASSWORD: Bhupesh@2001
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+  user-service:
+    build: ./user_service
+    container_name: user-service
+    ports:
+      - "8082:8080"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_URL: jdbc:mysql://mysql:3306/user_service_db?createDatabaseIfNotExist=TRUE
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Bhupesh@2001
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+  chatbot-service:
+    build: ./chatbot-service
+    container_name: chatbot-service
+    ports:
+      - "8083:8080"
+    depends_on:
+      - kafka
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_HOST: kafka
+      KAFKA_PORT: 9092
+
+  expense-service:
+    build: ./expense-service
+    container_name: expense-service
+    ports:
+      - "8084:8080"
+    depends_on:
+      - kafka
+      - mysql
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Bhupesh@2001
+      KAFKA_HOST: kafka
+      KAFKA_PORT: 9092
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+  gateway-service:
+    build: ./gateway-service
+    container_name: gateway-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - user-service
+      - expense-service
+      - chatbot-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      AUTH_SERVICE_HOST: auth-service
+      BASE_URL: gateway-service
+      USER_SERVICE_HOST: user-service
+      CHATBOT_SERVICE_HOST: chatbot-service
+      EXPENSE_SERVICE_HOST: expense-service
 
 volumes:
   mysql-db:

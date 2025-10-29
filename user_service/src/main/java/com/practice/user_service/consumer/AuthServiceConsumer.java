@@ -51,12 +51,12 @@ public class AuthServiceConsumer {
             switch (userInfoDto.getEventType()) {
                 case "CREATED":
                     log.info("Creating new user profile");
-                    userService.createOrUpdateUser(userInfoDto);
+                    userService.handleCreate(userInfoDto);
                     break;
                     
                 case "UPDATED":
                     log.info("Updating existing user profile");
-                    userService.createOrUpdateUser(userInfoDto);
+                    userService.handleUpdate(userInfoDto);
                     break;
                     
                 case "DELETED":

@@ -1,6 +1,7 @@
 package com.practice.user_service.services;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.user_service.dto.UserInfoDto;
 import com.practice.user_service.dto.UserResponseDto;
 import com.practice.user_service.entity.UserProfile;
@@ -25,30 +26,38 @@ public class UserService {
     
     private final UserProfileRepository userProfileRepository;
     private final UserMapper userMapper;
+    private final ObjectMapper objectMapper;
 
-    /**
-     * Create or update user from Kafka event
-     */
     @Transactional
-    public void createOrUpdateUser(UserInfoDto userInfoDto) {
-        log.info("Processing user event: userName={}, eventType={}",
-                userInfoDto.getUserId(), userInfoDto.getEventType());
-        
-        UserProfile userProfile = userProfileRepository.findById(userInfoDto.getUserId())
-                .orElse(new UserProfile());
-        
-        // Map DTO to Entity
-        userMapper.updateUserProfileFromDto(userInfoDto, userProfile);
-        
-        if (userProfile.getCreatedAt() == null) {
-            userProfile.setCreatedAt(LocalDateTime.now());
+    public void handleCreate(UserInfoDto userInfoDto) {
+        if (userProfileRepository.existsById(userInfoDto.getUserId())) {
+            log.warn("User with ID={} already exists. Skipping create.", userInfoDto.getUserId());
+            return;
         }
-        
-        UserProfile savedUser = userProfileRepository.save(userProfile);
-        log.info("Successfully saved user profile: userName={}, username={}",
-                savedUser.getUserId(), savedUser.getUsername());
+
+        UserProfile newProfile = objectMapper.convertValue(userInfoDto, UserProfile.class);
+        newProfile.setUserId(userInfoDto.getUserId());
+        newProfile.setCreatedAt(LocalDateTime.now());
+        newProfile.setUpdatedAt(LocalDateTime.now());
+        newProfile.setSyncedAt(LocalDateTime.now());
+
+        UserProfile saved = userProfileRepository.save(newProfile);
+        log.info("✅ Created new user profile: userId={}, username={}", saved.getUserId(), saved.getUsername());
     }
-    
+
+    @Transactional
+    public void handleUpdate(UserInfoDto userInfoDto) {
+        UserProfile existing = userProfileRepository.findById(userInfoDto.getUserId())
+                .orElseThrow(() -> new IllegalStateException("Cannot update: user not found for ID " + userInfoDto.getUserId()));
+
+        userMapper.updateUserProfileFromDto(userInfoDto, existing);
+        existing.setUpdatedAt(LocalDateTime.now());
+        existing.setSyncedAt(LocalDateTime.now());
+
+        UserProfile saved = userProfileRepository.save(existing);
+        log.info("✅ Updated user profile: userId={}, username={}", saved.getUserId(), saved.getUsername());
+    }
+
     /**
      * Delete user from Kafka event
      */
