@@ -20,9 +20,9 @@ services:
     container_name: mysql-8.3.0
     restart: always
     environment:
-      MYSQL_USER: root
-      MYSQL_PASSWORD: 'Bhupesh@2001'
-      MYSQL_ROOT_PASSWORD: 'Bhupesh@2001'
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - '3306:3306'
     volumes:
@@ -43,10 +43,12 @@ services:
       - mysql
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      DB_URL: jdbc:mysql://mysql:3306/auth_db2?createDatabaseIfNotExist=true
-      DB_USERNAME: root
-      DB_PASSWORD: Bhupesh@2001
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      KAFKA_HOST: ${KAFKA_HOST}
+      KAFKA_PORT: ${KAFKA_PORT}
 
   user-service:
     build: ./user_service
@@ -57,10 +59,12 @@ services:
       - mysql
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      DB_URL: jdbc:mysql://mysql:3306/user_service_db?createDatabaseIfNotExist=TRUE
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: Bhupesh@2001
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      KAFKA_HOST: ${KAFKA_HOST}
+      KAFKA_PORT: ${KAFKA_PORT}
 
   chatbot-service:
     build: ./chatbot-service
@@ -72,8 +76,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      KAFKA_HOST: kafka
-      KAFKA_PORT: 9092
+      KAFKA_HOST: ${KAFKA_HOST}
+      KAFKA_PORT: ${KAFKA_PORT}
 
   expense-service:
     build: ./expense-service
@@ -85,13 +89,12 @@ services:
       - mysql
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      MYSQL_HOST: mysql
-      MYSQL_PORT: 3306
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: Bhupesh@2001
-      KAFKA_HOST: kafka
-      KAFKA_PORT: 9092
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      KAFKA_HOST: ${KAFKA_HOST}
+      KAFKA_PORT: ${KAFKA_PORT}
 
   gateway-service:
     build: ./gateway-service
