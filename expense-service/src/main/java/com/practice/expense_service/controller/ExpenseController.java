@@ -19,9 +19,9 @@ public class ExpenseController
     private final ExpenseService expenseService;
 
     @GetMapping(path = "/getExpense")
-    public ResponseEntity<List<ExpenseDto>> getExpense(@RequestHeader(value = "X-User-Id") @NonNull String userId){
+    public ResponseEntity<List<ExpenseDto>> getExpense(@RequestHeader(value = "X-User-Name") @NonNull String userName){
          try{
-            List<ExpenseDto> expenseDtoList = expenseService.getExpenses(userId);
+            List<ExpenseDto> expenseDtoList = expenseService.getExpenses(userName);
             return new ResponseEntity<>(expenseDtoList, HttpStatus.OK);
          }catch(Exception ex){
              return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -33,8 +34,8 @@ public class ExpenseService {
         }
     }
 
-    public List<ExpenseDto> getExpenses(String userId) {
-        List<Expense> expenseOpt = expenseRepository.findByUserId(userId);
+    public List<ExpenseDto> getExpenses(String userName) {
+        List<Expense> expenseOpt = expenseRepository.findByUserName(userName).orElse(new ArrayList<>());
         return objectMapper.convertValue(expenseOpt, new TypeReference<>() {});
     }
 
